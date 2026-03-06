@@ -1,37 +1,29 @@
-'use client';
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { MYSTERY_DATA } from '@/lib/mysteryData';
+import { BookOpen } from 'lucide-react';
 
 interface CaseBriefingProps {
   mysteryId: string;
 }
 
-const BRIEFINGS: Record<string, { title: string; brief: string }> = {
-  winchester: {
-    title: 'Murder at Winchester Manor',
-    brief: 'A prestigious estate has been thrown into chaos following the sudden death of its owner. The victim was found in the library late evening. Five individuals had access to the estate that day, each with potential motives and suspicious behavior.',
-  },
-  hidden: {
-    title: 'The Hidden Truth',
-    brief: 'An artist\'s home was allegedly broken into, yet no obvious theft occurred. Instead, her artwork was damaged and she was found unconscious hours later. Inconsistencies in the story suggest something more sinister may have been orchestrated.',
-  },
-  heist: {
-    title: 'The Vintage Jewel Heist',
-    brief: 'A rare and priceless ruby has vanished from the most secure museum vault. Security footage was corrupted at a critical moment. Multiple suspects had access and expertise, but who orchestrated this heist?',
-  },
-};
-
 export function CaseBriefing({ mysteryId }: CaseBriefingProps) {
-  const briefing = BRIEFINGS[mysteryId] || BRIEFINGS.winchester;
+  const mystery = MYSTERY_DATA[mysteryId] || MYSTERY_DATA.winchester;
 
   return (
-    <Card className="max-h-24 overflow-auto border-border/50">
-      <CardHeader>
-        <CardTitle>{briefing.title}</CardTitle>
-        <CardDescription>Case Overview</CardDescription>
+    <Card className="border-none shadow-none bg-transparent">
+      <CardHeader className="px-0">
+        <CardTitle className="text-2xl flex items-center gap-2">
+          <BookOpen className="w-6 h-6 text-primary" />
+          Case Briefing
+        </CardTitle>
+        <CardDescription>Review the details of {mystery.title}</CardDescription>
       </CardHeader>
-      <CardContent>
-        <p className="text-sm text-foreground leading-relaxed">{briefing.brief}</p>
+      <CardContent className="px-0">
+        <div className="prose prose-sm dark:prose-invert max-w-none">
+          <p className="text-base text-foreground leading-relaxed bg-muted/30 p-6 rounded-2xl border border-border/50">
+            {mystery.brief}
+          </p>
+        </div>
       </CardContent>
     </Card>
   );
