@@ -1,19 +1,35 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { QueryEditor } from './QueryEditor';
-import { ResultsViewer } from './ResultsViewer';
-import { SchemaViewer } from './SchemaViewer';
-import { CluesSidebar } from './CluesSidebar';
-import { AccusationPanel } from './AccusationPanel';
-import { CaseBriefing } from './CaseBriefing';
-import { Button } from './ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { initDB, getDB, createSchema, seedWinchesterManor, seedHiddenDrawings, seedVintageHeist } from '@/lib/db';
-import { validateQuery } from '@/lib/queryValidator';
-import { RotateCcw, ArrowLeft, BookOpen, Code2, Database, Send, HelpCircle, Columns } from 'lucide-react';
-import Link from 'next/link';
-import { MYSTERY_DATA, Mystery, Clue } from '@/lib/mysteryData';
+import { useEffect, useState } from "react";
+import { QueryEditor } from "./QueryEditor";
+import { ResultsViewer } from "./ResultsViewer";
+import { SchemaViewer } from "./SchemaViewer";
+import { CluesSidebar } from "./CluesSidebar";
+import { AccusationPanel } from "./AccusationPanel";
+import { CaseBriefing } from "./CaseBriefing";
+import { Button } from "./ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import {
+  initDB,
+  getDB,
+  createSchema,
+  seedWinchesterManor,
+  seedHiddenDrawings,
+  seedVintageHeist,
+} from "@/lib/db";
+import { validateQuery } from "@/lib/queryValidator";
+import {
+  RotateCcw,
+  ArrowLeft,
+  BookOpen,
+  Code2,
+  Database,
+  Send,
+  HelpCircle,
+  Columns,
+} from "lucide-react";
+import Link from "next/link";
+import { MYSTERY_DATA, Mystery, Clue } from "@/lib/mysteryData";
 
 interface GameContainerProps {
   mysteryId: string;
@@ -35,14 +51,14 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
   const [schema, setSchema] = useState<TableSchema[]>([]);
   const [results, setResults] = useState<any[]>([]);
   const [columns, setColumns] = useState<string[]>([]);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [queryCount, setQueryCount] = useState(0);
   const [suspects, setSuspects] = useState<Suspect[]>([]);
   const [gameOver, setGameOver] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [showSchemaSidebar, setShowSchemaSidebar] = useState(true);
-  const [activeTab, setActiveTab] = useState('briefing');
+  const [activeTab, setActiveTab] = useState("briefing");
 
   const mystery = MYSTERY_DATA[mysteryId] || MYSTERY_DATA.winchester;
 
@@ -54,11 +70,11 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
         await createSchema();
 
         // Load mystery-specific data
-        if (mysteryId === 'winchester') {
+        if (mysteryId === "winchester") {
           await seedWinchesterManor();
-        } else if (mysteryId === 'hidden') {
+        } else if (mysteryId === "hidden") {
           await seedHiddenDrawings();
-        } else if (mysteryId === 'heist') {
+        } else if (mysteryId === "heist") {
           await seedVintageHeist();
         }
 
@@ -66,7 +82,7 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
         const database = getDB();
         const tables: TableSchema[] = [];
 
-        const tableNames = ['suspect', 'event', 'evidence'];
+        const tableNames = ["suspect", "event", "evidence"];
         for (const tableName of tableNames) {
           const stmt = database.prepare(`PRAGMA table_info(${tableName})`);
           const cols: Array<{ name: string; type: string }> = [];
@@ -84,7 +100,7 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
         setSchema(tables);
 
         // Load suspects from DB
-        const stmtS = database.prepare('SELECT * FROM suspect ORDER BY id');
+        const stmtS = database.prepare("SELECT * FROM suspect ORDER BY id");
         const suspectList: Suspect[] = [];
         while (stmtS.step()) {
           const row = stmtS.getAsObject();
@@ -99,8 +115,8 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
 
         setDbInitialized(true);
       } catch (err) {
-        console.error('Database initialization failed:', err);
-        setError('Failed to initialize game. Please refresh.');
+        console.error("Database initialization failed:", err);
+        setError("Failed to initialize game. Please refresh.");
       }
     };
 
@@ -108,14 +124,14 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
   }, [mysteryId]);
 
   const handleExecuteQuery = async (query: string) => {
-    setError('');
+    setError("");
     setResults([]);
     setColumns([]);
 
     // Validate query
     const validation = validateQuery(query);
     if (!validation.valid) {
-      setError(validation.error || 'Invalid query');
+      setError(validation.error || "Invalid query");
       return;
     }
 
@@ -141,9 +157,9 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
 
       setColumns(cols);
       setResults(rowList);
-      setQueryCount(prev => prev + 1);
+      setQueryCount((prev) => prev + 1);
     } catch (err: any) {
-      setError(err.message || 'Query execution failed');
+      setError(err.message || "Query execution failed");
     } finally {
       setIsLoading(false);
     }
@@ -158,7 +174,7 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
   const handleReset = async () => {
     setResults([]);
     setColumns([]);
-    setError('');
+    setError("");
     setQueryCount(0);
     setGameOver(false);
     setIsCorrect(false);
@@ -189,7 +205,9 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
               </Button>
             </Link>
             <div>
-              <h1 className="text-xl font-bold text-foreground tracking-tight">{mystery.title}</h1>
+              <h1 className="text-xl font-bold text-foreground tracking-tight">
+                {mystery.title}
+              </h1>
               <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
                 <span className="flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
@@ -211,7 +229,12 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
               {showSchemaSidebar ? "Hide Sidebar" : "Show Sidebar"}
             </Button>
             {gameOver && (
-              <Button onClick={handleReset} variant="destructive" size="sm" className="gap-2">
+              <Button
+                onClick={handleReset}
+                variant="destructive"
+                size="sm"
+                className="gap-2"
+              >
                 <RotateCcw className="w-4 h-4" />
                 Restart Case
               </Button>
@@ -239,26 +262,45 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
 
         {/* Tabbed Content Area */}
         <main className="flex-1 flex flex-col min-w-0 bg-background/50">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="flex-1 flex flex-col"
+          >
             <div className="px-6 pt-4 border-b border-border bg-card/30">
-              <TabsList className="bg-muted p-1 mb-2">
-                <TabsTrigger value="briefing" className="gap-2">
+              <TabsList className="p-1 mb-2 gap-2 bg-muted">
+                <TabsTrigger
+                  value="briefing"
+                  className={`gap-2 hover:text-accent-foreground ${activeTab === "briefing" ? " bg-white shadow-2xl border" : "bg-muted/20"}`}
+                >
                   <BookOpen className="w-4 h-4" />
                   Case Overview
                 </TabsTrigger>
-                <TabsTrigger value="editor" className="gap-2">
+                <TabsTrigger
+                  value="editor"
+                  className={`gap-2 hover:text-accent-foreground ${activeTab === "editor" ? " bg-white shadow-2xl border" : " bg-muted/20"}`}
+                >
                   <Code2 className="w-4 h-4" />
                   SQL Editor
                 </TabsTrigger>
-                <TabsTrigger value="schema" className="lg:hidden gap-2">
+                <TabsTrigger
+                  value="schema"
+                  className={`lg:hidden gap-2 hover:text-accent-foreground ${activeTab === "schema" ? " bg-white shadow-2xl border" : " bg-muted/20"}`}
+                >
                   <Database className="w-4 h-4" />
                   Schema
                 </TabsTrigger>
-                <TabsTrigger value="submission" className="gap-2">
+                <TabsTrigger
+                  value="submission"
+                  className={`gap-2 hover:text-accent-foreground ${activeTab === "submission" ? " bg-white shadow-2xl border" : " bg-muted/20"}`}
+                >
                   <Send className="w-4 h-4" />
                   Submission
                 </TabsTrigger>
-                <TabsTrigger value="help" className="gap-2">
+                <TabsTrigger
+                  value="help"
+                  className={`gap-2 hover:text-accent-foreground ${activeTab === "help" ? " bg-white shadow-2xl border" : " bg-muted/20"}`}
+                >
                   <HelpCircle className="w-4 h-4" />
                   Help
                 </TabsTrigger>
@@ -266,13 +308,19 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
             </div>
 
             <div className="flex-1 overflow-hidden">
-              <TabsContent value="briefing" className="h-full p-6 m-0 outline-none">
+              <TabsContent
+                value="briefing"
+                className="h-full p-6 m-0 outline-none"
+              >
                 <div className="max-w-4xl mx-auto h-full overflow-auto">
                   <CaseBriefing mysteryId={mysteryId} />
                 </div>
               </TabsContent>
 
-              <TabsContent value="editor" className="h-full p-4 m-0 outline-none">
+              <TabsContent
+                value="editor"
+                className="h-full p-4 m-0 outline-none"
+              >
                 <div className="h-full grid grid-cols-1 xl:grid-cols-[1.2fr_1fr] gap-4">
                   <QueryEditor
                     onExecute={handleExecuteQuery}
@@ -287,13 +335,19 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
                 </div>
               </TabsContent>
 
-              <TabsContent value="schema" className="h-full p-6 m-0 outline-none lg:hidden">
+              <TabsContent
+                value="schema"
+                className="h-full p-6 m-0 outline-none lg:hidden"
+              >
                 <div className="max-w-4xl mx-auto h-full overflow-auto">
                   <SchemaViewer schema={schema} />
                 </div>
               </TabsContent>
 
-              <TabsContent value="submission" className="h-full p-6 m-0 outline-none">
+              <TabsContent
+                value="submission"
+                className="h-full p-6 m-0 outline-none"
+              >
                 <div className="max-w-2xl mx-auto h-full">
                   <AccusationPanel
                     suspects={suspects}
@@ -307,7 +361,10 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
 
               <TabsContent value="help" className="h-full p-6 m-0 outline-none">
                 <div className="max-w-2xl mx-auto h-full">
-                  <CluesSidebar clues={mystery.clues} currentLevel={currentLevel} />
+                  <CluesSidebar
+                    clues={mystery.clues}
+                    currentLevel={currentLevel}
+                  />
                 </div>
               </TabsContent>
             </div>

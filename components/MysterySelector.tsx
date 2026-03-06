@@ -46,8 +46,8 @@ export function MysterySelector() {
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 flex items-center justify-center p-4">
       <div className="w-full max-w-6xl">
         <div className="mb-12 text-center">
-          <h1 className="text-4xl font-bold text-foreground mb-2">SQL Sleuth</h1>
-          <p className="text-lg text-muted-foreground">Solve mysteries using SQL queries</p>
+          <h1 className="text-4xl font-bold text-foreground mb-2">🔍 Murder By Query</h1>
+          <p className="text-lg text-muted-foreground">Solve mysteries inspired by thrillers with SQL queries</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
