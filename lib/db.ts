@@ -56,15 +56,6 @@ export async function createSchema() {
       found_by TEXT
     )
   `);
-
-  database.run(`
-    CREATE TABLE IF NOT EXISTS clue (
-      id INTEGER PRIMARY KEY,
-      unlock_level INTEGER NOT NULL,
-      content TEXT NOT NULL,
-      category TEXT
-    )
-  `);
 }
 
 export async function seedWinchesterManor() {
@@ -74,7 +65,6 @@ export async function seedWinchesterManor() {
   database.run('DELETE FROM suspect');
   database.run('DELETE FROM event');
   database.run('DELETE FROM evidence');
-  database.run('DELETE FROM clue');
 
   // Suspects (inspired by The Housemaid, but with original names)
   database.run(`INSERT INTO suspect (id, name, role, motive) VALUES 
@@ -106,16 +96,6 @@ export async function seedWinchesterManor() {
     (5, 'Telegram', 'Entrance Hall Table', 'Urgent message from London', 'Margaret'),
     (6, 'Witness Statement', 'Interview Room', 'Margaret claims she was reading', 'Police')
   `);
-
-  // Clues
-  database.run(`INSERT INTO clue (id, unlock_level, content, category) VALUES 
-    (1, 0, 'The victim was poisoned. Toxicology shows rare compound.', 'Cause'),
-    (2, 1, 'Elena Vasquez has a false identity. Real name: Elena Valencias, previously employed by Dr. Reed.', 'Background'),
-    (3, 2, 'Charles Winchester made a phone call at 19:50 to an unlisted number. Records show it matches Victor Ashford''s private line.', 'Communication'),
-    (4, 3, 'Margaret Winchester purchased poison through a veterinary supplier 3 weeks ago under an alias.', 'Evidence'),
-    (5, 4, 'The letter fragment found at the scene mentions "unborn child" and "inheritance rights".', 'Motive'),
-    (6, 5, 'Dr. Reed''s financial records show he was owed 50,000 pounds by Charles Winchester. The debt was due that very day.', 'Finance')
-  `);
 }
 
 export async function seedHiddenDrawings() {
@@ -125,7 +105,6 @@ export async function seedHiddenDrawings() {
   database.run('DELETE FROM suspect');
   database.run('DELETE FROM event');
   database.run('DELETE FROM evidence');
-  database.run('DELETE FROM clue');
 
   // Suspects (inspired by Hidden Pictures, but with original names)
   database.run(`INSERT INTO suspect (id, name, role, motive) VALUES 
@@ -157,16 +136,6 @@ export async function seedHiddenDrawings() {
     (5, 'Journal Entries', 'Nightstand', 'Increasingly paranoid writing', 'Police'),
     (6, 'Wire Transfer Records', 'Computer', 'Large payments from James to offshore account', 'Police')
   `);
-
-  // Clues
-  database.run(`INSERT INTO clue (id, unlock_level, content, category) VALUES 
-    (1, 0, 'Rebecca was prescribed antipsychotics at dosages that cause hallucinations if overdosed.', 'Medical'),
-    (2, 1, 'James Hart increased life insurance on Rebecca to 2 million 6 months ago.', 'Insurance'),
-    (3, 2, 'Glass fragments show Rebecca'\''s paintings were stored in the broken window frame before shattering.', 'Forensics'),
-    (4, 3, 'Dr. Stone and Marcus Chen were seen at dinner together 3 times in the week before the incident.', 'Surveillance'),
-    (5, 4, 'Nina Volkov''s work visa application by James Hart shows Nina is his half-sister, hidden from Rebecca.', 'Background'),
-    (6, 5, 'James Hart hired a therapist who had been previously fired for causing patient harm. Same therapist was paid extra fees.', 'Conspiracy')
-  `);
 }
 
 export async function seedVintageHeist() {
@@ -176,7 +145,6 @@ export async function seedVintageHeist() {
   database.run('DELETE FROM suspect');
   database.run('DELETE FROM event');
   database.run('DELETE FROM evidence');
-  database.run('DELETE FROM clue');
 
   // Suspects (original heist mystery)
   database.run(`INSERT INTO suspect (id, name, role, motive) VALUES 
@@ -207,15 +175,5 @@ export async function seedVintageHeist() {
     (4, 'Diamond Receipt', 'Henry''s Workshop', 'Documentation for recent certification work', 'Police'),
     (5, 'Security Schedule', 'Guard Station', 'Lily''s shift changed day before theft', 'Police'),
     (6, 'Communication Records', 'Phone Company', 'Call pattern between Fletcher and Laurent', 'Police')
-  `);
-
-  // Clues
-  database.run(`INSERT INTO clue (id, unlock_level, content, category) VALUES 
-    (1, 0, 'The bypass device matches technology Detective Walsh''s partner was convicted of using in 2015.', 'Connection'),
-    (2, 1, 'Henry Blackwell was fired from the museum 2 years ago by Augustus Fletcher over disputed gemstone values.', 'Motive'),
-    (3, 2, 'Sophia Laurent and Henry Blackwell registered a shell company 18 months ago for "gemstone trading".', 'Business'),
-    (4, 3, 'Detective Walsh made 5 transfers to Lily Morrison totaling 45,000 pounds in the 3 months prior to theft.', 'Finance'),
-    (5, 4, 'Security footage backup confirms Lily Morrison was stationed at the opposite entrance during the theft window.', 'Alibi'),
-    (6, 5, 'Museum insurance policy had been secretly transferred to Augustus Fletcher as beneficiary through forged documents.', 'Fraud')
   `);
 }

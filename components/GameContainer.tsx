@@ -8,10 +8,12 @@ import { CluesSidebar } from './CluesSidebar';
 import { AccusationPanel } from './AccusationPanel';
 import { CaseBriefing } from './CaseBriefing';
 import { Button } from './ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { initDB, getDB, createSchema, seedWinchesterManor, seedHiddenDrawings, seedVintageHeist } from '@/lib/db';
 import { validateQuery } from '@/lib/queryValidator';
-import { RotateCcw, Menu, ArrowLeft } from 'lucide-react';
+import { RotateCcw, ArrowLeft, BookOpen, Code2, Database, Send, HelpCircle, Columns } from 'lucide-react';
 import Link from 'next/link';
+import { MYSTERY_DATA, Mystery, Clue } from '@/lib/mysteryData';
 
 interface GameContainerProps {
   mysteryId: string;
@@ -22,30 +24,11 @@ interface TableSchema {
   columns: Array<{ name: string; type: string }>;
 }
 
-interface Clue {
-  id: number;
-  content: string;
-  category: string;
-  unlockLevel: number;
-}
-
 interface Suspect {
   id: number;
   name: string;
   role: string;
 }
-
-const MYSTERY_CORRECT_SUSPECT: Record<string, number> = {
-  winchester: 2, // Margaret Winchester
-  hidden: 2, // James Hart
-  heist: 3, // Detective James Walsh
-};
-
-const MYSTERY_TITLES: Record<string, string> = {
-  winchester: 'Murder at Winchester Manor',
-  hidden: 'The Hidden Truth',
-  heist: 'The Vintage Jewel Heist',
-};
 
 export function GameContainer({ mysteryId }: GameContainerProps) {
   const [dbInitialized, setDbInitialized] = useState(false);
@@ -55,11 +38,13 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [queryCount, setQueryCount] = useState(0);
-  const [clues, setClues] = useState<Clue[]>([]);
   const [suspects, setSuspects] = useState<Suspect[]>([]);
   const [gameOver, setGameOver] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
-  const [showSidebar, setShowSidebar] = useState(true);
+  const [showSchemaSidebar, setShowSchemaSidebar] = useState(true);
+  const [activeTab, setActiveTab] = useState('briefing');
+
+  const mystery = MYSTERY_DATA[mysteryId] || MYSTERY_DATA.winchester;
 
   // Initialize database and load mystery data
   useEffect(() => {
@@ -81,7 +66,7 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
         const database = getDB();
         const tables: TableSchema[] = [];
 
-        const tableNames = ['suspect', 'event', 'evidence', 'clue'];
+        const tableNames = ['suspect', 'event', 'evidence'];
         for (const tableName of tableNames) {
           const stmt = database.prepare(`PRAGMA table_info(${tableName})`);
           const cols: Array<{ name: string; type: string }> = [];
@@ -98,22 +83,7 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
 
         setSchema(tables);
 
-        // Load clues
-        const stmt = database.prepare('SELECT * FROM clue ORDER BY unlock_level');
-        const clueList: Clue[] = [];
-        while (stmt.step()) {
-          const row = stmt.getAsObject();
-          clueList.push({
-            id: row.id as number,
-            content: row.content as string,
-            category: row.category as string,
-            unlockLevel: row.unlock_level as number,
-          });
-        }
-        stmt.free();
-        setClues(clueList);
-
-        // Load suspects
+        // Load suspects from DB
         const stmtS = database.prepare('SELECT * FROM suspect ORDER BY id');
         const suspectList: Suspect[] = [];
         while (stmtS.step()) {
@@ -180,7 +150,7 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
   };
 
   const handleAccuse = (suspectId: number) => {
-    const correct = suspectId === MYSTERY_CORRECT_SUSPECT[mysteryId];
+    const correct = suspectId === mystery.correctSuspectId;
     setIsCorrect(correct);
     setGameOver(true);
   };
@@ -208,100 +178,142 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-background">
+    <div className="h-screen flex flex-col bg-background overflow-hidden">
       {/* Header */}
-      <header className="border-b border-border bg-card">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">{MYSTERY_TITLES[mysteryId]}</h1>
-            <p className="text-sm text-muted-foreground">Queries: {queryCount} | Investigation Level: {currentLevel}</p>
-          </div>
-          <div className="flex gap-2 text-primary">
-            {gameOver && (
-              <Button onClick={handleReset} variant="outline" className="gap-2">
-                <RotateCcw className="w-4 h-4" />
-                Restart
-              </Button>
-            )}
-            <Button
-              onClick={() => setShowSidebar(!showSidebar)}
-              variant="outline"
-              size="icon"
-              className="md:hidden"
-            >
-              <Menu className="w-4 h-4" />
-            </Button>
+      <header className="border-b border-border bg-card/50 backdrop-blur-md sticky top-0 z-20">
+        <div className="max-w-[1600px] mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
             <Link href="/">
-              <Button variant="outline" className="gap-2">
-                <ArrowLeft className="w-4 h-4" />
-                Back to Mysteries
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <ArrowLeft className="w-5 h-5" />
               </Button>
             </Link>
+            <div>
+              <h1 className="text-xl font-bold text-foreground tracking-tight">{mystery.title}</h1>
+              <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
+                <span className="flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                  Queries: {queryCount}
+                </span>
+                <span>•</span>
+                <span>Case Level: {currentLevel}</span>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button
+              variant={showSchemaSidebar ? "secondary" : "ghost"}
+              size="sm"
+              onClick={() => setShowSchemaSidebar(!showSchemaSidebar)}
+              className="hidden lg:flex gap-2"
+            >
+              <Columns className="w-4 h-4" />
+              {showSchemaSidebar ? "Hide Sidebar" : "Show Sidebar"}
+            </Button>
+            {gameOver && (
+              <Button onClick={handleReset} variant="destructive" size="sm" className="gap-2">
+                <RotateCcw className="w-4 h-4" />
+                Restart Case
+              </Button>
+            )}
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-hidden flex gap-4 p-4">
-        {/* Left Panel */}
-        <div className="flex-1 flex flex-col gap-4 min-w-0">
-          {/* Case Briefing */}
-          <div className="max-h-24">
-            <CaseBriefing mysteryId={mysteryId} />
-          </div>
-
-          {/* Editor and Results */}
-          <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <QueryEditor
-              onExecute={handleExecuteQuery}
-              isLoading={isLoading}
-              error={error}
-            />
-            <ResultsViewer
-              rows={results}
-              columns={columns}
-              isLoading={isLoading}
-            />
-          </div>
-
-          {/* Schema Viewer */}
-          <div className="h-56 min-h-0">
-            <SchemaViewer schema={schema} />
-          </div>
-        </div>
-
-        {/* Right Sidebar */}
-        {showSidebar && (
-          <div className="w-80 flex flex-col gap-4 hidden md:flex">
-            <div className="flex-1 min-h-0 overflow-hidden">
-              <CluesSidebar clues={clues} currentLevel={currentLevel} />
+      <div className="flex-1 flex overflow-hidden">
+        {/* Sidebar Schema (Persistent Option) */}
+        {showSchemaSidebar && (
+          <aside className="w-72 border-r border-border bg-muted/20 hidden lg:flex flex-col animate-in slide-in-from-left duration-300">
+            <div className="p-4 border-b border-border bg-card/30 flex items-center justify-between">
+              <h2 className="text-sm font-semibold flex items-center gap-2">
+                <Database className="w-4 h-4 text-primary" />
+                Database Schema
+              </h2>
             </div>
-            <div className="h-80 min-h-0">
-              <AccusationPanel
-                suspects={suspects}
-                correctSuspectId={MYSTERY_CORRECT_SUSPECT[mysteryId]}
-                onAccuse={handleAccuse}
-                gameOver={gameOver}
-                isCorrect={isCorrect}
-              />
+            <div className="flex-1 overflow-auto p-4">
+              <SchemaViewer schema={schema} />
             </div>
-          </div>
+          </aside>
         )}
-      </div>
 
-      {/* Mobile: Clues and Accusation */}
-      {!showSidebar && (
-        <div className="md:hidden border-t border-border p-4 max-h-96 overflow-y-auto space-y-4">
-          <CluesSidebar clues={clues} currentLevel={currentLevel} />
-          <AccusationPanel
-            suspects={suspects}
-            correctSuspectId={MYSTERY_CORRECT_SUSPECT[mysteryId]}
-            onAccuse={handleAccuse}
-            gameOver={gameOver}
-            isCorrect={isCorrect}
-          />
-        </div>
-      )}
+        {/* Tabbed Content Area */}
+        <main className="flex-1 flex flex-col min-w-0 bg-background/50">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
+            <div className="px-6 pt-4 border-b border-border bg-card/30">
+              <TabsList className="bg-muted p-1 mb-2">
+                <TabsTrigger value="briefing" className="gap-2">
+                  <BookOpen className="w-4 h-4" />
+                  Case Overview
+                </TabsTrigger>
+                <TabsTrigger value="editor" className="gap-2">
+                  <Code2 className="w-4 h-4" />
+                  SQL Editor
+                </TabsTrigger>
+                <TabsTrigger value="schema" className="lg:hidden gap-2">
+                  <Database className="w-4 h-4" />
+                  Schema
+                </TabsTrigger>
+                <TabsTrigger value="submission" className="gap-2">
+                  <Send className="w-4 h-4" />
+                  Submission
+                </TabsTrigger>
+                <TabsTrigger value="help" className="gap-2">
+                  <HelpCircle className="w-4 h-4" />
+                  Help
+                </TabsTrigger>
+              </TabsList>
+            </div>
+
+            <div className="flex-1 overflow-hidden">
+              <TabsContent value="briefing" className="h-full p-6 m-0 outline-none">
+                <div className="max-w-4xl mx-auto h-full overflow-auto">
+                  <CaseBriefing mysteryId={mysteryId} />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="editor" className="h-full p-4 m-0 outline-none">
+                <div className="h-full grid grid-cols-1 xl:grid-cols-[1.2fr_1fr] gap-4">
+                  <QueryEditor
+                    onExecute={handleExecuteQuery}
+                    isLoading={isLoading}
+                    error={error}
+                  />
+                  <ResultsViewer
+                    rows={results}
+                    columns={columns}
+                    isLoading={isLoading}
+                  />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="schema" className="h-full p-6 m-0 outline-none lg:hidden">
+                <div className="max-w-4xl mx-auto h-full overflow-auto">
+                  <SchemaViewer schema={schema} />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="submission" className="h-full p-6 m-0 outline-none">
+                <div className="max-w-2xl mx-auto h-full">
+                  <AccusationPanel
+                    suspects={suspects}
+                    correctSuspectId={mystery.correctSuspectId}
+                    onAccuse={handleAccuse}
+                    gameOver={gameOver}
+                    isCorrect={isCorrect}
+                  />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="help" className="h-full p-6 m-0 outline-none">
+                <div className="max-w-2xl mx-auto h-full">
+                  <CluesSidebar clues={mystery.clues} currentLevel={currentLevel} />
+                </div>
+              </TabsContent>
+            </div>
+          </Tabs>
+        </main>
+      </div>
     </div>
   );
 }
