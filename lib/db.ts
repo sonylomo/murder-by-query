@@ -1,5 +1,6 @@
 import initSqlJs, { type Database } from "sql.js";
 
+// biome-ignore lint/suspicious/noExplicitAny: <sql.js doesn't provide types>
 let SQL: any = null;
 let db: Database | null = null;
 

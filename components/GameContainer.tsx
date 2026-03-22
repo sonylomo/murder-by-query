@@ -50,6 +50,7 @@ interface Suspect {
 export function GameContainer({ mysteryId }: GameContainerProps) {
 	const [dbInitialized, setDbInitialized] = useState(false);
 	const [schema, setSchema] = useState<TableSchema[]>([]);
+	// biome-ignore lint/suspicious/noExplicitAny: <sql.js returns any>
 	const [results, setResults] = useState<any[]>([]);
 	const [columns, setColumns] = useState<string[]>([]);
 	const [error, setError] = useState<string>("");
@@ -171,6 +172,7 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
 
 			// Execute query
 			const stmt = database.prepare(query);
+			// biome-ignore lint/suspicious/noExplicitAny: <sql.js returns any>
 			const rowList: any[] = [];
 			const cols: string[] = [];
 
@@ -188,6 +190,7 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
 			setColumns(cols);
 			setResults(rowList);
 			setQueryCount((prev) => prev + 1);
+			// biome-ignore lint/suspicious/noExplicitAny: <sql.js returns any>
 		} catch (err: any) {
 			setError(err.message || "Query execution failed");
 		} finally {

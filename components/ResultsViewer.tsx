@@ -9,6 +9,7 @@ import {
 } from "./ui/card";
 
 interface ResultsViewerProps {
+	// biome-ignore lint/suspicious/noExplicitAny: <sql.js returns any>
 	rows: any[];
 	columns: string[];
 	isLoading?: boolean;
