@@ -60,8 +60,33 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
   const [isCorrect, setIsCorrect] = useState(false);
   const [showSchemaSidebar, setShowSchemaSidebar] = useState(true);
   const [activeTab, setActiveTab] = useState("briefing");
+  const [currentQuery, setCurrentQuery] = useState("");
 
   const mystery = MYSTERY_DATA[mysteryId] || MYSTERY_DATA.winchester;
+
+  useEffect(() => {
+    const savedState = localStorage.getItem(`sql_editor_${mysteryId}`);
+    if (savedState) {
+      try {
+        const state = JSON.parse(savedState);
+        setQueryCount(state.queryCount || 0);
+        setActiveTab(state.activeTab || "briefing");
+        setCurrentQuery(state.currentQuery || "");
+      } catch (err) {
+        console.error("Failed to load saved state:", err);
+      }
+    }
+  }, [mysteryId]);
+
+  useEffect(() => {
+    const stateToSave = {
+      queryCount,
+      activeTab,
+      currentQuery,
+      lastUpdated: new Date().toISOString(),
+    };
+    localStorage.setItem(`sql_editor_${mysteryId}`, JSON.stringify(stateToSave));
+  }, [queryCount, activeTab, currentQuery, mysteryId]);
 
   // Initialize database and load mystery data
   useEffect(() => {
@@ -128,6 +153,7 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
     setError("");
     setResults([]);
     setColumns([]);
+    setCurrentQuery(query);
 
     // Validate query
     const validation = validateQuery(query);
@@ -179,6 +205,10 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
     setQueryCount(0);
     setGameOver(false);
     setIsCorrect(false);
+    setCurrentQuery("");
+    
+    // Clear saved state for this mystery
+    localStorage.removeItem(`sql_editor_${mysteryId}`);
   };
 
   const currentLevel = Math.floor(queryCount / 3);
@@ -334,6 +364,7 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
                     onExecute={handleExecuteQuery}
                     isLoading={isLoading}
                     error={error}
+                    initialQuery={currentQuery}
                   />
                   <ResultsViewer
                     rows={results}

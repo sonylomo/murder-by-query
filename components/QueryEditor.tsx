@@ -11,10 +11,11 @@ interface QueryEditorProps {
   onExecute: (query: string) => void;
   isLoading?: boolean;
   error?: string;
+  initialQuery?: string;
 }
 
-export function QueryEditor({ onExecute, isLoading, error }: QueryEditorProps) {
-  const [query, setQuery] = useState('SELECT * FROM suspect;');
+export function QueryEditor({ onExecute, isLoading, error, initialQuery }: QueryEditorProps) {
+  const [query, setQuery] = useState(initialQuery || 'SELECT * FROM suspect;');
 
   const handleExecute = () => {
     onExecute(query);
