@@ -131,12 +131,28 @@
 }
 
 @layer components {
-	.sql-hl-keyword { @apply text-primary font-bold; }
-	.sql-hl-string { @apply text-green-500; }
-	.sql-hl-number { @apply text-orange-500; }
-	.sql-hl-comment { @apply text-muted-foreground italic; }
-	.sql-hl-operator { @apply text-foreground font-medium; }
-	.sql-hl-builtin { @apply text-blue-500; }
-	.sql-hl-function { @apply text-yellow-500; }
-	.sql-hl-variable { @apply text-purple-400; }
+	.sql-hl-keyword {
+		@apply text-primary font-bold;
+	}
+	.sql-hl-string {
+		@apply text-green-500;
+	}
+	.sql-hl-number {
+		@apply text-orange-500;
+	}
+	.sql-hl-comment {
+		@apply text-muted-foreground italic;
+	}
+	.sql-hl-operator {
+		@apply text-foreground font-medium;
+	}
+	.sql-hl-builtin {
+		@apply text-blue-500;
+	}
+	.sql-hl-function {
+		@apply text-yellow-500;
+	}
+	.sql-hl-variable {
+		@apply text-purple-400;
+	}
 }
