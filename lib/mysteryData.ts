@@ -54,7 +54,7 @@ export const MYSTERY_DATA: Record<string, Mystery> = {
 					"evidence",
 					"WHERE",
 					"LIKE",
-					"venerinary",
+					"veterinary",
 				],
 			},
 			{

@@ -105,7 +105,6 @@ export function AccusationPanel({
 									{/* <span className="font-semibold">
                     {suspects.find(s => s.id === correctSuspectId)?.name}
                   </span> */}
-									.
 								</AlertDescription>
 							</Alert>
 						)}

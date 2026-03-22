@@ -1,7 +1,8 @@
 "use client";
 
+import DOMPurify from "dompurify";
 import { AlertCircle, Play } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { highlight } from "sql-highlight";
 import { Alert, AlertDescription } from "./ui/alert";
 import { Button } from "./ui/button";
@@ -31,12 +32,13 @@ export function QueryEditor({
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const highlightRef = useRef<HTMLDivElement>(null);
 
-	const updateHighlight = () => {
+	const updateHighlight = useCallback(() => {
 		if (highlightRef.current) {
 			const highlightedHTML = highlight(query, { html: true });
-			// Use textContent to safely set the highlighted content
+			const sanitizedHTML = DOMPurify.sanitize(highlightedHTML);
+			// Parse sanitized markup into nodes before insertion.
 			const tempDiv = document.createElement("div");
-			tempDiv.innerHTML = highlightedHTML;
+			tempDiv.innerHTML = sanitizedHTML;
 			highlightRef.current.innerHTML = "";
 			while (tempDiv.firstChild) {
 				highlightRef.current.appendChild(tempDiv.firstChild);
@@ -44,12 +46,11 @@ export function QueryEditor({
 			// Add a newline at the end
 			highlightRef.current.appendChild(document.createTextNode("\n"));
 		}
-	};
+	}, [query]);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <this is intentional>
 	useEffect(() => {
 		updateHighlight();
-	}, [query]);
+	}, [updateHighlight]);
 
 	const handleExecute = () => {
 		onExecute(query);
@@ -140,7 +141,7 @@ export function QueryEditor({
 							onChange={(e) => setQuery(e.target.value)}
 							onKeyDown={handleKeyDown}
 							onScroll={handleScroll}
-							className="absolute inset-0 flex-1 font-mono text-sm resize-none bg-transparent text-transparent caret-foreground focus-visible:ring-0 focus-visible:ring-offset-0 border-border/50 overflow-auto [field-sizing:initial] min-h-0 h-full scrollbar-thin selection:bg-primary/30"
+							className="placeholder:text-muted-foreground absolute inset-0 flex-1 font-mono text-sm resize-none bg-transparent text-transparent caret-foreground focus-visible:ring-0 focus-visible:ring-offset-0 border-border/50 overflow-auto [field-sizing:initial] min-h-0 h-full scrollbar-thin selection:bg-primary/30"
 							placeholder="SELECT * FROM suspect;"
 							spellCheck="false"
 						/>

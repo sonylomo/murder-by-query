@@ -15,6 +15,7 @@ const DANGEROUS_PATTERNS = [
 	/\bCREATE\b/gi,
 	/\bATTACH\b/gi,
 	/\bDETACH\b/gi,
+	/;\s*\w+/,
 ];
 
 const _ALLOWED_SELECT_PATTERNS = [
@@ -75,21 +76,22 @@ export function validateQuery(query: string): QueryValidationResult {
 	}
 
 	// Check if it starts with SELECT
-	// if (!/^\s*SELECT\b/gi.test(trimmedQuery)) {
-	// 	return {
-	// 		valid: false,
-	// 		error:
-	// 			"Only SELECT queries are allowed. Your query must start with SELECT.",
-	// 	};
-	// }
+	if (!/^\s*SELECT\b/gi.test(trimmedQuery)) {
+		return {
+			valid: false,
+			error:
+				"Only SELECT queries are allowed. Your query must start with SELECT.",
+		};
+	}
 
-	// Check for SQL injection patterns
-	// if (/['"];?\s*;/g.test(trimmedQuery) || /--\s*$|\/\*/g.test(trimmedQuery)) {
-	//   return {
-	//     valid: false,
-	//     error: 'Query contains suspicious patterns that may indicate SQL injection attempt.',
-	//   };
-	// }
+	//   Check for SQL injection patterns
+	if (/['"];?\s*;/g.test(trimmedQuery) || /--\s*$|\/\*/g.test(trimmedQuery)) {
+		return {
+			valid: false,
+			error:
+				"Query contains suspicious patterns that may indicate SQL injection attempt.",
+		};
+	}
 
 	return { valid: true };
 }
