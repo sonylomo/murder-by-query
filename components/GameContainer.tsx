@@ -55,31 +55,39 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
 	const [columns, setColumns] = useState<string[]>([]);
 	const [error, setError] = useState<string>("");
 	const [isLoading, setIsLoading] = useState(false);
+	const [showSchemaSidebar, setShowSchemaSidebar] = useState(true);
+
 	const [queryCount, setQueryCount] = useState(0);
+	const [activeTab, setActiveTab] = useState("briefing");
+	const [currentQuery, setCurrentQuery] = useState("");
+	const [isLoaded, setIsLoaded] = useState(false);
+
 	const [suspects, setSuspects] = useState<Suspect[]>([]);
 	const [gameOver, setGameOver] = useState(false);
 	const [isCorrect, setIsCorrect] = useState(false);
-	const [showSchemaSidebar, setShowSchemaSidebar] = useState(true);
-	const [activeTab, setActiveTab] = useState("briefing");
-	const [currentQuery, setCurrentQuery] = useState("");
 
 	const mystery = MYSTERY_DATA[mysteryId] || MYSTERY_DATA.winchester;
 
+	// Load state on mount
 	useEffect(() => {
-		const savedState = localStorage.getItem(`sql_editor_${mysteryId}`);
-		if (savedState) {
+		const saved = localStorage.getItem(`sql_editor_${mysteryId}`);
+		if (saved) {
 			try {
-				const state = JSON.parse(savedState);
-				setQueryCount(state.queryCount || 0);
-				setActiveTab(state.activeTab || "briefing");
-				setCurrentQuery(state.currentQuery || "");
+				const state = JSON.parse(saved);
+				setQueryCount(state.queryCount ?? 0);
+				setActiveTab(state.activeTab ?? "briefing");
+				setCurrentQuery(state.currentQuery ?? "");
 			} catch (err) {
-				console.error("Failed to load saved state:", err);
+				console.error("Failed to parse saved state:", err);
 			}
 		}
+		setIsLoaded(true);
 	}, [mysteryId]);
 
+	// Save state when changes occur, but only after initial load
 	useEffect(() => {
+		if (!isLoaded) return;
+
 		const stateToSave = {
 			queryCount,
 			activeTab,
@@ -90,7 +98,7 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
 			`sql_editor_${mysteryId}`,
 			JSON.stringify(stateToSave),
 		);
-	}, [queryCount, activeTab, currentQuery, mysteryId]);
+	}, [queryCount, activeTab, currentQuery, mysteryId, isLoaded]);
 
 	// Initialize database and load mystery data
 	useEffect(() => {
@@ -189,7 +197,7 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
 
 			setColumns(cols);
 			setResults(rowList);
-			setQueryCount((prev) => prev + 1);
+			setQueryCount((prev: number) => prev + 1);
 			// biome-ignore lint/suspicious/noExplicitAny: <sql.js returns any>
 		} catch (err: any) {
 			setError(err.message || "Query execution failed");
@@ -385,7 +393,7 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
 								className="h-full p-6 m-0 outline-none"
 							>
 								<div className="max-w-4xl mx-auto h-full overflow-auto">
-									<NotesPanel />
+									<NotesPanel key={mysteryId} mysteryId={mysteryId} />
 								</div>
 							</TabsContent>
 

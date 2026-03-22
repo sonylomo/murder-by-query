@@ -9,19 +9,24 @@ import {
 } from "./ui/card";
 import { Textarea } from "./ui/textarea";
 
-export function NotesPanel() {
+export function NotesPanel({ mysteryId }: { mysteryId: string }) {
+	const storageKey = `notes_${mysteryId}`;
 	const [notes, setNotes] = useState("");
+	const [isLoaded, setIsLoaded] = useState(false);
 
 	useEffect(() => {
-		const storedNotes = localStorage.getItem("notes");
+		const storedNotes = localStorage.getItem(storageKey);
 		if (storedNotes) {
 			setNotes(storedNotes);
 		}
-	}, []);
+		setIsLoaded(true);
+	}, [storageKey]);
 
 	useEffect(() => {
-		localStorage.setItem("notes", notes);
-	}, [notes]);
+		if (isLoaded) {
+			localStorage.setItem(storageKey, notes);
+		}
+	}, [notes, storageKey, isLoaded]);
 
 	return (
 		<Card className="border-none shadow-none bg-transparent">

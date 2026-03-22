@@ -129,7 +129,7 @@ export function QueryEditor({
 						{/* Highlighting Layer */}
 						<div
 							ref={highlightRef}
-							className="absolute inset-0 px-2.5 py-2 font-mono text-sm pointer-events-none whitespace-pre-wrap break-words overflow-auto border border-transparent bg-background/50 rounded-lg"
+							className="absolute inset-0 px-2.5 py-2 font-mono text-sm pointer-events-none whitespace-pre-wrap wrap-break-word overflow-auto border border-transparent bg-background/50 rounded-lg"
 							aria-hidden="true"
 						/>
 
