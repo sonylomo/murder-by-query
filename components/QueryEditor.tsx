@@ -39,31 +39,33 @@ export function QueryEditor({
 	};
 
 	return (
-		<Card className="h-full flex flex-col border-border/50">
+		<Card className="h-[80vh] flex flex-col border-border/50">
 			<CardHeader>
 				<CardTitle>SQL Query Editor</CardTitle>
 				<CardDescription>
 					Write SELECT queries to investigate. Ctrl+Enter to execute.
 				</CardDescription>
 			</CardHeader>
-			<CardContent className="flex-1 flex flex-col gap-4">
-				<Textarea
-					value={query}
-					onChange={(e) => setQuery(e.target.value)}
-					onKeyDown={handleKeyDown}
-					className="flex-1 font-mono text-sm resize-none bg-background/50"
-					placeholder="SELECT * FROM suspect WHERE role = 'Architect';"
-					spellCheck="false"
-				/>
+			<CardContent className="flex-1 flex flex-col min-h-0 gap-4 p-6 overflow-hidden">
+				<div className="flex-1 flex flex-col min-h-0 gap-4 overflow-hidden">
+					<Textarea
+						value={query}
+						onChange={(e) => setQuery(e.target.value)}
+						onKeyDown={handleKeyDown}
+						className="flex-1 font-mono text-sm resize-none bg-background/50 overflow-y-auto [field-sizing:initial] min-h-0 h-full"
+						placeholder="SELECT * FROM suspect;"
+						spellCheck="false"
+					/>
 
-				{error && (
-					<Alert className="bg-destructive/10 border-destructive/20">
-						<AlertCircle className="h-4 w-4 text-destructive" />
-						<AlertDescription className="text-destructive text-sm">
-							{error}
-						</AlertDescription>
-					</Alert>
-				)}
+					{error && (
+						<Alert className="bg-destructive/10 border-destructive/20 shrink-0">
+							<AlertCircle className="h-4 w-4 text-destructive" />
+							<AlertDescription className="text-destructive text-sm">
+								{error}
+							</AlertDescription>
+						</Alert>
+					)}
+				</div>
 
 				<Button
 					onClick={handleExecute}

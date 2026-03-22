@@ -16,7 +16,8 @@ export async function initDB() {
 
 export function getDB() {
 	if (!db) {
-		throw new Error("Database not initialized. Call initDB() first.");
+		console.error("Database not initialized. Call initDB() first.");
+		throw new Error("Database not initialized. Reload window and try again.");
 	}
 	return db;
 }
