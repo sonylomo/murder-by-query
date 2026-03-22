@@ -365,7 +365,7 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
 								value="editor"
 								className="h-full p-4 m-0 outline-none"
 							>
-								<div className="h-full grid grid-cols-1 xl:grid-cols-[1.2fr_1fr] gap-4">
+								<div className="h-screen grid grid-cols-1 xl:grid-cols-[1.2fr_1fr] gap-4 overflow-y-auto">
 									<QueryEditor
 										onExecute={handleExecuteQuery}
 										isLoading={isLoading}

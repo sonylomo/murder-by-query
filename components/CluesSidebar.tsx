@@ -22,7 +22,7 @@ export function CluesSidebar({ clues, currentLevel }: CluesSidebarProps) {
 	const lockedClues = clues.filter((c) => c.unlockLevel > currentLevel);
 
 	return (
-		<Card className="h-full flex flex-col border-none shadow-none bg-transparent">
+		<Card className="h-[80vh] flex flex-col border-none shadow-none bg-transparent">
 			<CardHeader className="px-0">
 				<CardTitle className="text-xl flex items-center gap-2">
 					<Search className="w-5 h-5 text-primary" />
@@ -104,7 +104,18 @@ function ClueItem({ clue }: { clue: Clue }) {
 				<p className="text-[10px] text-muted-foreground uppercase mb-2 flex items-center gap-1">
 					<Key className="w-3 h-3" /> Recommended Keywords
 				</p>
-				<div className="flex flex-wrap gap-1.5">
+				<div
+					className="flex flex-wrap gap-1.5 blur-sm hover:blur-none transition-all duration-200 cursor-pointer"
+					onClick={(e) => {
+						// For mobile: remove blur on click and add a class to keep it clear
+						const target = e.currentTarget;
+						if (window.innerWidth < 768) {
+							// mobile breakpoint
+							target.classList.remove("blur-sm");
+							target.classList.add("blur-none");
+						}
+					}}
+				>
 					{clue.queryKeywords.map((kw) => (
 						<code
 							key={kw}

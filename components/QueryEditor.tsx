@@ -116,7 +116,7 @@ export function QueryEditor({
 	};
 
 	return (
-		<Card className="h-[80vh] flex flex-col border-border/50">
+		<Card className="h-full md:h-[80vh] flex flex-col border-border/50">
 			<CardHeader>
 				<CardTitle>SQL Query Editor</CardTitle>
 				<CardDescription>
