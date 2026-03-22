@@ -75,13 +75,13 @@ export function validateQuery(query: string): QueryValidationResult {
 	}
 
 	// Check if it starts with SELECT
-	if (!/^\s*SELECT\b/gi.test(trimmedQuery)) {
-		return {
-			valid: false,
-			error:
-				"Only SELECT queries are allowed. Your query must start with SELECT.",
-		};
-	}
+	// if (!/^\s*SELECT\b/gi.test(trimmedQuery)) {
+	// 	return {
+	// 		valid: false,
+	// 		error:
+	// 			"Only SELECT queries are allowed. Your query must start with SELECT.",
+	// 	};
+	// }
 
 	// Check for SQL injection patterns
 	// if (/['"];?\s*;/g.test(trimmedQuery) || /--\s*$|\/\*/g.test(trimmedQuery)) {
