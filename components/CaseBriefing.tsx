@@ -20,7 +20,7 @@ export function CaseBriefing({ mysteryId }: CaseBriefingProps) {
       </CardHeader>
       <CardContent className="px-0">
         <div className="prose prose-sm dark:prose-invert max-w-none">
-          <p className="text-base text-foreground leading-relaxed bg-muted/30 p-6 rounded-2xl border border-border/50">
+          <p className="text-base text-foreground leading-relaxed bg-white p-6 rounded-2xl border border-border/50">
             {mystery.brief}
           </p>
         </div>

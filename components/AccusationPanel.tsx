@@ -83,10 +83,11 @@ export function AccusationPanel({
               <Alert className="bg-destructive/10 border-destructive/20">
                 <XCircle className="h-5 w-5 text-destructive" />
                 <AlertDescription className="text-destructive">
-                  Incorrect! The real culprit was{' '}
-                  <span className="font-semibold">
+                  Incorrect! Give it another try.
+                  {/* Incorrect! The real culprit was{' '} */}
+                  {/* <span className="font-semibold">
                     {suspects.find(s => s.id === correctSuspectId)?.name}
-                  </span>
+                  </span> */}
                   .
                 </AlertDescription>
               </Alert>

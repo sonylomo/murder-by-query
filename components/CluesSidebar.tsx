@@ -64,7 +64,7 @@ function ClueItem({ clue }: { clue: Clue }) {
   const [revealed, setRevealed] = useState(false);
 
   return (
-    <div className="p-4 bg-muted/40 border border-border/50 rounded-xl space-y-3">
+    <div className="p-4 bg-white border border-border/50 rounded-xl space-y-3">
       <div className="flex items-center justify-between">
         <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20">{clue.category}</Badge>
       </div>

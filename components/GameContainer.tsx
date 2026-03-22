@@ -29,7 +29,8 @@ import {
   Columns,
 } from "lucide-react";
 import Link from "next/link";
-import { MYSTERY_DATA, Mystery, Clue } from "@/lib/mysteryData";
+import { MYSTERY_DATA } from "@/lib/mysteryData";
+import { NotesPanel } from "./NotesPanel";
 
 interface GameContainerProps {
   mysteryId: string;
@@ -291,6 +292,13 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
                   Schema
                 </TabsTrigger>
                 <TabsTrigger
+                  value="notes"
+                  className={`gap-2 hover:text-accent-foreground ${activeTab === "notes" ? " bg-white shadow-2xl border" : " bg-muted/20"}`}
+                >
+                  <BookOpen className="w-4 h-4" />
+                  Notes
+                </TabsTrigger>
+                <TabsTrigger
                   value="submission"
                   className={`gap-2 hover:text-accent-foreground ${activeTab === "submission" ? " bg-white shadow-2xl border" : " bg-muted/20"}`}
                 >
@@ -298,11 +306,11 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
                   Submission
                 </TabsTrigger>
                 <TabsTrigger
-                  value="help"
-                  className={`gap-2 hover:text-accent-foreground ${activeTab === "help" ? " bg-white shadow-2xl border" : " bg-muted/20"}`}
+                  value="clues"
+                  className={`gap-2 hover:text-accent-foreground ${activeTab === "clues" ? " bg-white shadow-2xl border" : " bg-muted/20"}`}
                 >
                   <HelpCircle className="w-4 h-4" />
-                  Help
+                  Clues
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -336,6 +344,15 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
               </TabsContent>
 
               <TabsContent
+                value="notes"
+                className="h-full p-6 m-0 outline-none"
+              >
+                <div className="max-w-4xl mx-auto h-full overflow-auto">
+                  <NotesPanel />
+                </div>
+              </TabsContent>
+
+              <TabsContent
                 value="schema"
                 className="h-full p-6 m-0 outline-none lg:hidden"
               >
@@ -359,7 +376,7 @@ export function GameContainer({ mysteryId }: GameContainerProps) {
                 </div>
               </TabsContent>
 
-              <TabsContent value="help" className="h-full p-6 m-0 outline-none">
+              <TabsContent value="clues" className="h-full p-6 m-0 outline-none">
                 <div className="max-w-2xl mx-auto h-full">
                   <CluesSidebar
                     clues={mystery.clues}

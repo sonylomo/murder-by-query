@@ -83,12 +83,12 @@ export function validateQuery(query: string): QueryValidationResult {
   }
 
   // Check for SQL injection patterns
-  if (/['"];?\s*;/g.test(trimmedQuery) || /--\s*$|\/\*/g.test(trimmedQuery)) {
-    return {
-      valid: false,
-      error: 'Query contains suspicious patterns that may indicate SQL injection attempt.',
-    };
-  }
+  // if (/['"];?\s*;/g.test(trimmedQuery) || /--\s*$|\/\*/g.test(trimmedQuery)) {
+  //   return {
+  //     valid: false,
+  //     error: 'Query contains suspicious patterns that may indicate SQL injection attempt.',
+  //   };
+  // }
 
   return { valid: true };
 }
